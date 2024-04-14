@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicum CBT Tool</title>
+  <style>
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #timer {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Nicum CBT Tool</h1>
+  <p>Thanks to r/JEENEETards for being an amazing and inspiring community! Forever grateful. ~Aritro Shome</p>
+  <br/ >
+  <div id="formContainer">
+    <label for="numQuestions">Number of Questions:</label>
+    <input type="number" id="numQuestions" min="1">
+    <br>
+    <label for="timeLimit">Time Limit (in minutes):</label>
+    <input type="number" id="timeLimit" min="1">
+    <br>
+    <button onclick="generateForm()">Generate Form</button>
+  </div>
+
+  <script>
+    var timerInterval;
+    var questionTypes = []; // Define questionTypes array globally
+
+    function generateForm() {
+      var numQuestions = parseInt(document.getElementById("numQuestions").value);
+      var timeLimit = parseInt(document.getElementById("timeLimit").value);
+      var formContainer = document.getElementById("formContainer");
+      formContainer.innerHTML = "";
+
+      questionTypes = []; // Clear questionTypes array
+
+      for (var i = 1; i <= numQuestions; i++) {
+        var questionDiv = document.createElement("div");
+        questionDiv.innerHTML = "<h3>Question " + i + "</h3>";
+
+        var questionTypeSelect = document.createElement("select");
+        questionTypeSelect.name = "questionType" + i;
+        questionTypeSelect.innerHTML = `
+          <option value="single">Single Correct</option>
+          <option value="multiple">Multiple Correct</option>
+          <option value="integer">Integer/Numerical Type</option>
+        `;
+        questionDiv.appendChild(questionTypeSelect);
+
+        questionTypes.push(questionTypeSelect); // Push the select element to questionTypes array
+
+        formContainer.appendChild(questionDiv);
+      }
+
+      var generateFormButton = document.createElement("button");
+      generateFormButton.textContent = "Generate Question Form";
+      generateFormButton.onclick = function() {
+        generateQuestionForm();
+        generateFormButton.style.display = "none"; // Hide the button after generating the form
+      };
+      formContainer.appendChild(generateFormButton);
+
+      // Start the timer after generating the question form
+      startTimer(timeLimit);
+    }
+
+    function generateQuestionForm() {
+      var formContainer = document.getElementById("formContainer");
+
+      var formHTML = "";
+
+      for (var i = 0; i < questionTypes.length; i++) {
+        var questionTypeSelect = questionTypes[i];
+        var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
+
+        formHTML += "<h3>Question " + (i + 1) + "</h3>";
+
+        if (questionType === "single") {
+          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="a"> A</label>';
+          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="b"> B</label>';
+          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="c"> C</label>';
+          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="d"> D</label>';
+        } else if (questionType === "multiple") {
+          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="a"> A</label>';
+          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="b"> B</label>';
+          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="c"> C</label>';
+          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="d"> D</label>';
+        } else if (questionType === "integer") {
+          formHTML += '<label>Enter Answer: <input type="number" name="question' + (i + 1) + '" step="0.01"></label>';
+        }
+      }
+
+      formContainer.innerHTML = formHTML;
+
+      var submitButton = document.createElement("button");
+      submitButton.textContent = "Submit";
+      submitButton.onclick = submitForm;
+      formContainer.appendChild(submitButton);
+    }
+
+    function disableFormInputs() {
+      var inputs = document.querySelectorAll('input, select');
+      inputs.forEach(function(input) {
+        input.disabled = true;
+      });
+    }
+
+    function submitForm() {
+      clearInterval(timerInterval); // Stop the timer
+      displayResponses();
+    }
+
+    function displayResponses() {
+      var responseContainer = document.createElement("div");
+      responseContainer.innerHTML = "<h2>Participant Responses</h2>";
+
+      var formContainer = document.getElementById("formContainer");
+
+      for (var i = 0; i < questionTypes.length; i++) {
+        var questionTypeSelect = questionTypes[i];
+        var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
+
+        var response = "<p><strong>Question " + (i + 1) + ":</strong><br>";
+
+        if (questionType === "single") {
+          var selectedOption = formContainer.querySelector('input[name="question' + (i + 1) + '"]:checked');
+          response += selectedOption ? selectedOption.value.toUpperCase() : "DID NOT ATTEMPT";
+        } else if (questionType === "multiple") {
+          var selectedOptions = formContainer.querySelectorAll('input[name="question' + (i + 1) + '"]:checked');
+          if (selectedOptions.length > 0) {
+            selectedOptions.forEach(function(option) {
+              response += option.value.toUpperCase() + ", ";
+            });
+            response = response.slice(0, -2); // Remove the last comma and space
+          } else {
+            response += "DID NOT ATTEMPT";
+          }
+        } else if (questionType === "integer") {
+          var enteredValue = formContainer.querySelector('input[name="question' + (i + 1) + '"]').value;
+          response += enteredValue ? enteredValue : "DID NOT ATTEMPT";
+        }
+
+        response += "</p>";
+        responseContainer.innerHTML += response;
+      }
+
+      formContainer.innerHTML = responseContainer.innerHTML;
+    }
+
+    function startTimer(duration) {
+      var timer = duration * 60,
+        minutes, seconds;
+      timerInterval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        document.getElementById('time').textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+          timer = duration * 60;
+          alert("Time's up! Your responses will no longer be accepted.");
+          submitForm(); // Automatically submit the form when time is up
+        }
+      }, 1000);
+    }
+  </script>
+  <div id="timer">Time Remaining: <span id="time">--:--</span></div>
+</body>
+</html>
