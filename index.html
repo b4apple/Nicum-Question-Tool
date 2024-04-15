@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nicum CBT Tool</title>
+  <title>Nicum CBT (beta)</title>
   <style>
     label {
       display: block;
@@ -22,9 +22,9 @@
   </style>
 </head>
 <body>
-  <h1>Nicum CBT Tool</h1>
-  <p>Thanks to r/JEENEETards for being an amazing and inspiring community! Forever grateful. ~Aritro Shome</p>
-  <br/ >
+  <h1>Question Form Generator</h1>
+  <br />
+  <p>Thanks r/JEENEETards for the inspiration and for being an amazing helpful community. ~Aritro Shome</p>
   <div id="formContainer">
     <label for="numQuestions">Number of Questions:</label>
     <input type="number" id="numQuestions" min="1">
@@ -101,6 +101,8 @@
         } else if (questionType === "integer") {
           formHTML += '<label>Enter Answer: <input type="number" name="question' + (i + 1) + '" step="0.01"></label>';
         }
+
+        formHTML += '<button onclick="clearResponse(' + (i + 1) + ')">Clear Response</button>'; // Add Clear Response button after each question
       }
 
       formContainer.innerHTML = formHTML;
@@ -109,6 +111,27 @@
       submitButton.textContent = "Submit";
       submitButton.onclick = submitForm;
       formContainer.appendChild(submitButton);
+    }
+
+    function clearResponse(questionIndex) {
+      var formContainer = document.getElementById("formContainer");
+      var questionTypeSelect = questionTypes[questionIndex - 1];
+      var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
+
+      if (questionType === "single") {
+        var radioButtons = formContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
+        radioButtons.forEach(function(button) {
+          button.checked = false;
+        });
+      } else if (questionType === "multiple") {
+        var checkboxes = formContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
+        checkboxes.forEach(function(checkbox) {
+          checkbox.checked = false;
+        });
+      } else if (questionType === "integer") {
+        var input = formContainer.querySelector('input[name="question' + questionIndex + '"]');
+        input.value = "";
+      }
     }
 
     function disableFormInputs() {
