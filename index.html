@@ -5,40 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Generate Nicum CBT question forms easily with this online tool. Create single correct, multiple correct, and numerical type questions.">
   <title>Nicum CBT (beta)</title>
-  <style>
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    #timer {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background-color: white;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-  </style>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Nicum CBT Tool (Beta)</h1>
-  <br />
-  <p>Thanks r/JEENEETards for the inspiration and for being an amazing helpful community. ~Aritro Shome</p>
-  <p>NOTE : UI Enhancement, Palette, Sections and more to come after 26th May 2024, stay tuned. Of now, use multi correct as a slapstick alternative to matrix match.</p>
-  <p>Legal Notice : <a href="https://raw.githubusercontent.com/b4apple/Nicum-Question-Tool/main/LICENSE">NOTICE</p>
-  <a href="https://forms.gle/Uo4A9cpNk6T7kXzw9">Feedback Form</a>
-  <br/>
-  <div id="formContainer">
-    <label for="numQuestions">Number of Questions:</label>
-    <input type="number" id="numQuestions" min="1">
-    <br>
-    <label for="timeLimit">Time Limit (in minutes):</label>
-    <input type="number" id="timeLimit" min="1">
-    <br>
-    <button onclick="generateForm()">Generate Form</button>
+  <div class="container mt-5">
+    <h1 class="mb-4">Nicum CBT Tool (Beta)</h1>
+    <p>Thanks r/JEENEETards for the inspiration and for being an amazing helpful community. ~Aritro Shome</p>
+    <p>NOTE: UI Enhancement, Palette, Sections and more to come after 26th May 2024, stay tuned. Of now, use multi correct as a slapstick alternative to matrix match.</p>
+    <p>Legal Notice: <a href="https://raw.githubusercontent.com/b4apple/Nicum-Question-Tool/main/LICENSE">NOTICE</a></p>
+    <a href="https://forms.gle/Uo4A9cpNk6T7kXzw9" class="mb-4">Feedback Form</a>
+    <div id="formContainer">
+      <div class="form-group">
+        <label for="numQuestions">Number of Questions:</label>
+        <input type="number" id="numQuestions" class="form-control" min="1">
+      </div>
+      <div class="form-group">
+        <label for="timeLimit">Time Limit (in minutes):</label>
+        <input type="number" id="timeLimit" class="form-control" min="1">
+      </div>
+      <button onclick="generateForm()" class="btn btn-primary">Generate Form</button>
+    </div>
+
+    <div id="questionContainer" class="mt-4"></div>
   </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <script>
     var timerInterval;
@@ -58,6 +53,7 @@
 
         var questionTypeSelect = document.createElement("select");
         questionTypeSelect.name = "questionType" + i;
+        questionTypeSelect.className = "form-control";
         questionTypeSelect.innerHTML = `
           <option value="single">Single Correct</option>
           <option value="multiple">Multiple Correct</option>
@@ -72,6 +68,7 @@
 
       var generateFormButton = document.createElement("button");
       generateFormButton.textContent = "Generate Question Form";
+      generateFormButton.className = "btn btn-primary mt-3";
       generateFormButton.onclick = function() {
         generateQuestionForm();
         generateFormButton.style.display = "none"; // Hide the button after generating the form
@@ -83,7 +80,8 @@
     }
 
     function generateQuestionForm() {
-      var formContainer = document.getElementById("formContainer");
+      var questionContainer = document.getElementById("questionContainer");
+      questionContainer.innerHTML = "";
 
       var formHTML = "";
 
@@ -94,56 +92,77 @@
         formHTML += "<h3>Question " + (i + 1) + "</h3>";
 
         if (questionType === "single") {
-          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="a"> A</label>';
-          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="b"> B</label>';
-          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="c"> C</label>';
-          formHTML += '<label><input type="radio" name="question' + (i + 1) + '" value="d"> D</label>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="a" id="question' + (i + 1) + 'a">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'a">A</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="b" id="question' + (i + 1) + 'b">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'b">B</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="c" id="question' + (i + 1) + 'c">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'c">C</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="d" id="question' + (i + 1) + 'd">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'd">D</label>';
+          formHTML += '</div>';
         } else if (questionType === "multiple") {
-          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="a"> A</label>';
-          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="b"> B</label>';
-          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="c"> C</label>';
-          formHTML += '<label><input type="checkbox" name="question' + (i + 1) + '" value="d"> D</label>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="a" id="question' + (i + 1) + 'a">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'a">A</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="b" id="question' + (i + 1) + 'b">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'b">B</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="c" id="question' + (i + 1) + 'c">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'c">C</label>';
+          formHTML += '</div>';
+          formHTML += '<div class="form-check">';
+          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="d" id="question' + (i + 1) + 'd">';
+          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'd">D</label>';
+          formHTML += '</div>';
         } else if (questionType === "integer") {
-          formHTML += '<label>Enter Answer: <input type="number" name="question' + (i + 1) + '" step="0.01"></label>';
+          formHTML += '<div class="form-group">';
+          formHTML += '<label for="question' + (i + 1) + '">Enter Answer:</label>';
+          formHTML += '<input type="number" class="form-control" name="question' + (i + 1) + '" id="question' + (i + 1) + '">';
+          formHTML += '</div>';
         }
 
-        formHTML += '<button onclick="clearResponse(' + (i + 1) + ')">Clear Response</button>'; // Add Clear Response button after each question
+        formHTML += '<button onclick="clearResponse(' + (i + 1) + ')" class="btn btn-danger">Clear Response</button>'; // Add Clear Response button after each question
       }
 
-      formContainer.innerHTML = formHTML;
+      questionContainer.innerHTML = formHTML;
 
       var submitButton = document.createElement("button");
       submitButton.textContent = "Submit";
+      submitButton.className = "btn btn-primary mt-3";
       submitButton.onclick = submitForm;
-      formContainer.appendChild(submitButton);
+      questionContainer.appendChild(submitButton);
     }
 
     function clearResponse(questionIndex) {
-      var formContainer = document.getElementById("formContainer");
+      var questionContainer = document.getElementById("questionContainer");
       var questionTypeSelect = questionTypes[questionIndex - 1];
       var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
 
       if (questionType === "single") {
-        var radioButtons = formContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
+        var radioButtons = questionContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
         radioButtons.forEach(function(button) {
           button.checked = false;
         });
       } else if (questionType === "multiple") {
-        var checkboxes = formContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
+        var checkboxes = questionContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
         checkboxes.forEach(function(checkbox) {
           checkbox.checked = false;
         });
       } else if (questionType === "integer") {
-        var input = formContainer.querySelector('input[name="question' + questionIndex + '"]');
+        var input = questionContainer.querySelector('input[name="question' + questionIndex + '"]');
         input.value = "";
       }
-    }
-
-    function disableFormInputs() {
-      var inputs = document.querySelectorAll('input, select');
-      inputs.forEach(function(input) {
-        input.disabled = true;
-      });
     }
 
     function submitForm() {
@@ -153,9 +172,9 @@
 
     function displayResponses() {
       var responseContainer = document.createElement("div");
-      responseContainer.innerHTML = "<h2>Participant Responses</h2>";
+      responseContainer.innerHTML = "<h2 class='mt-4'>Participant Responses</h2>";
 
-      var formContainer = document.getElementById("formContainer");
+      var questionContainer = document.getElementById("questionContainer");
 
       for (var i = 0; i < questionTypes.length; i++) {
         var questionTypeSelect = questionTypes[i];
@@ -164,10 +183,10 @@
         var response = "<p><strong>Question " + (i + 1) + ":</strong><br>";
 
         if (questionType === "single") {
-          var selectedOption = formContainer.querySelector('input[name="question' + (i + 1) + '"]:checked');
+          var selectedOption = questionContainer.querySelector('input[name="question' + (i + 1) + '"]:checked');
           response += selectedOption ? selectedOption.value.toUpperCase() : "DID NOT ATTEMPT";
         } else if (questionType === "multiple") {
-          var selectedOptions = formContainer.querySelectorAll('input[name="question' + (i + 1) + '"]:checked');
+          var selectedOptions = questionContainer.querySelectorAll('input[name="question' + (i + 1) + '"]:checked');
           if (selectedOptions.length > 0) {
             selectedOptions.forEach(function(option) {
               response += option.value.toUpperCase() + ", ";
@@ -177,7 +196,7 @@
             response += "DID NOT ATTEMPT";
           }
         } else if (questionType === "integer") {
-          var enteredValue = formContainer.querySelector('input[name="question' + (i + 1) + '"]').value;
+          var enteredValue = questionContainer.querySelector('input[name="question' + (i + 1) + '"]').value;
           response += enteredValue ? enteredValue : "DID NOT ATTEMPT";
         }
 
@@ -185,7 +204,7 @@
         responseContainer.innerHTML += response;
       }
 
-      formContainer.innerHTML = responseContainer.innerHTML;
+      questionContainer.innerHTML = responseContainer.innerHTML;
     }
 
     function startTimer(duration) {
@@ -208,6 +227,7 @@
       }, 1000);
     }
   </script>
-  <div id="timer">Time Remaining: <span id="time">--:--</span></div>
+
+  <div id="timer" class="position-fixed" style="top: 10px; right: 10px; background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">Time Remaining: <span id="time">--:--</span></div>
 </body>
 </html>
