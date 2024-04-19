@@ -1,233 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+<title>Nicum CBT Tool (Beta Re-write)</title>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Generate Nicum CBT question forms easily with this online tool. Create single correct, multiple correct, and numerical type questions.">
-  <title>Nicum CBT (beta)</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rubik Glitch' rel='stylesheet'>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./script.js"></script>
 </head>
+
 <body>
-  <div class="container mt-5">
-    <h1 class="mb-4">Nicum CBT Tool (Beta)</h1>
-    <p>Thanks r/JEENEETards for the inspiration and for being an amazing helpful community. ~Aritro Shome</p>
-    <p>NOTE: UI Enhancement, Palette, Sections and more to come after 26th May 2024, stay tuned. Of now, use multi correct as a slapstick alternative to matrix match.</p>
-    <p>Legal Notice: <a href="https://raw.githubusercontent.com/b4apple/Nicum-Question-Tool/main/LICENSE">NOTICE</a></p>
-    <a href="https://forms.gle/Uo4A9cpNk6T7kXzw9" class="mb-4">Feedback Form</a>
-    <div id="formContainer">
-      <div class="form-group">
-        <label for="numQuestions">Number of Questions:</label>
-        <input type="number" id="numQuestions" class="form-control" min="1">
-      </div>
-      <div class="form-group">
-        <label for="timeLimit">Time Limit (in minutes):</label>
-        <input type="number" id="timeLimit" class="form-control" min="1">
-      </div>
-      <button onclick="generateForm()" class="btn btn-primary">Generate Form</button>
+    <h1>Nicum CBT Tool (Beta Re-write)</h1>
+    <div id="work-area">
+        <fieldset>
+            <legend>Enter the details of the test</legend>
+            <span class="instruction-text">Enter the number of questions : </span><input type="number" min="1"
+                id="question-count"> <br>
+            <span class="instruction-text">Enter the number of minutes the exam lasts : </span><input type="number"
+                min="1" id="time"> <br>
+            <span class="instruction-text">Enter the name of the exam : </span><input type="text" id="exam-name"> <br>
+            <button id="exam-detail-submit" class="button" onclick="testFormat()">Procced</button>
+        </fieldset>
     </div>
-
-    <div id="questionContainer" class="mt-4"></div>
-  </div>
-
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <script>
-    var timerInterval;
-    var questionTypes = []; // Define questionTypes array globally
-
-    function generateForm() {
-      var numQuestions = parseInt(document.getElementById("numQuestions").value);
-      var timeLimit = parseInt(document.getElementById("timeLimit").value);
-      var formContainer = document.getElementById("formContainer");
-      formContainer.innerHTML = "";
-
-      questionTypes = []; // Clear questionTypes array
-
-      for (var i = 1; i <= numQuestions; i++) {
-        var questionDiv = document.createElement("div");
-        questionDiv.innerHTML = "<h3>Question " + i + "</h3>";
-
-        var questionTypeSelect = document.createElement("select");
-        questionTypeSelect.name = "questionType" + i;
-        questionTypeSelect.className = "form-control";
-        questionTypeSelect.innerHTML = `
-          <option value="single">Single Correct</option>
-          <option value="multiple">Multiple Correct</option>
-          <option value="integer">Integer/Numerical Type</option>
-        `;
-        questionDiv.appendChild(questionTypeSelect);
-
-        questionTypes.push(questionTypeSelect); // Push the select element to questionTypes array
-
-        formContainer.appendChild(questionDiv);
-      }
-
-      var generateFormButton = document.createElement("button");
-      generateFormButton.textContent = "Generate Question Form";
-      generateFormButton.className = "btn btn-primary mt-3";
-      generateFormButton.onclick = function() {
-        generateQuestionForm();
-        generateFormButton.style.display = "none"; // Hide the button after generating the form
-      };
-      formContainer.appendChild(generateFormButton);
-
-      // Start the timer after generating the question form
-      startTimer(timeLimit);
-    }
-
-    function generateQuestionForm() {
-      var questionContainer = document.getElementById("questionContainer");
-      questionContainer.innerHTML = "";
-
-      var formHTML = "";
-
-      for (var i = 0; i < questionTypes.length; i++) {
-        var questionTypeSelect = questionTypes[i];
-        var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
-
-        formHTML += "<h3>Question " + (i + 1) + "</h3>";
-
-        if (questionType === "single") {
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="a" id="question' + (i + 1) + 'a">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'a">A</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="b" id="question' + (i + 1) + 'b">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'b">B</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="c" id="question' + (i + 1) + 'c">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'c">C</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="radio" name="question' + (i + 1) + '" value="d" id="question' + (i + 1) + 'd">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'd">D</label>';
-          formHTML += '</div>';
-        } else if (questionType === "multiple") {
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="a" id="question' + (i + 1) + 'a">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'a">A</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="b" id="question' + (i + 1) + 'b">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'b">B</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="c" id="question' + (i + 1) + 'c">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'c">C</label>';
-          formHTML += '</div>';
-          formHTML += '<div class="form-check">';
-          formHTML += '<input class="form-check-input" type="checkbox" name="question' + (i + 1) + '" value="d" id="question' + (i + 1) + 'd">';
-          formHTML += '<label class="form-check-label" for="question' + (i + 1) + 'd">D</label>';
-          formHTML += '</div>';
-        } else if (questionType === "integer") {
-          formHTML += '<div class="form-group">';
-          formHTML += '<label for="question' + (i + 1) + '">Enter Answer:</label>';
-          formHTML += '<input type="number" class="form-control" name="question' + (i + 1) + '" id="question' + (i + 1) + '">';
-          formHTML += '</div>';
-        }
-
-        formHTML += '<button onclick="clearResponse(' + (i + 1) + ')" class="btn btn-danger">Clear Response</button>'; // Add Clear Response button after each question
-      }
-
-      questionContainer.innerHTML = formHTML;
-
-      var submitButton = document.createElement("button");
-      submitButton.textContent = "Submit";
-      submitButton.className = "btn btn-primary mt-3";
-      submitButton.onclick = submitForm;
-      questionContainer.appendChild(submitButton);
-    }
-
-    function clearResponse(questionIndex) {
-      var questionContainer = document.getElementById("questionContainer");
-      var questionTypeSelect = questionTypes[questionIndex - 1];
-      var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
-
-      if (questionType === "single") {
-        var radioButtons = questionContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
-        radioButtons.forEach(function(button) {
-          button.checked = false;
-        });
-      } else if (questionType === "multiple") {
-        var checkboxes = questionContainer.querySelectorAll('input[name="question' + questionIndex + '"]');
-        checkboxes.forEach(function(checkbox) {
-          checkbox.checked = false;
-        });
-      } else if (questionType === "integer") {
-        var input = questionContainer.querySelector('input[name="question' + questionIndex + '"]');
-        input.value = "";
-      }
-    }
-
-    function submitForm() {
-      clearInterval(timerInterval); // Stop the timer
-      displayResponses();
-    }
-
-    function displayResponses() {
-      var responseContainer = document.createElement("div");
-      responseContainer.innerHTML = "<h2 class='mt-4'>Participant Responses</h2>";
-
-      var questionContainer = document.getElementById("questionContainer");
-
-      for (var i = 0; i < questionTypes.length; i++) {
-        var questionTypeSelect = questionTypes[i];
-        var questionType = questionTypeSelect.options[questionTypeSelect.selectedIndex].value; // Retrieve the selected option's value
-
-        var response = "<p><strong>Question " + (i + 1) + ":</strong><br>";
-
-        if (questionType === "single") {
-          var selectedOption = questionContainer.querySelector('input[name="question' + (i + 1) + '"]:checked');
-          response += selectedOption ? selectedOption.value.toUpperCase() : "DID NOT ATTEMPT";
-        } else if (questionType === "multiple") {
-          var selectedOptions = questionContainer.querySelectorAll('input[name="question' + (i + 1) + '"]:checked');
-          if (selectedOptions.length > 0) {
-            selectedOptions.forEach(function(option) {
-              response += option.value.toUpperCase() + ", ";
-            });
-            response = response.slice(0, -2); // Remove the last comma and space
-          } else {
-            response += "DID NOT ATTEMPT";
-          }
-        } else if (questionType === "integer") {
-          var enteredValue = questionContainer.querySelector('input[name="question' + (i + 1) + '"]').value;
-          response += enteredValue ? enteredValue : "DID NOT ATTEMPT";
-        }
-
-        response += "</p>";
-        responseContainer.innerHTML += response;
-      }
-
-      questionContainer.innerHTML = responseContainer.innerHTML;
-    }
-
-    function startTimer(duration) {
-      var timer = duration * 60,
-        minutes, seconds;
-      timerInterval = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        document.getElementById('time').textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-          timer = duration * 60;
-          alert("Time's up! Your responses will no longer be accepted.");
-          submitForm(); // Automatically submit the form when time is up
-        }
-      }, 1000);
-    }
-  </script>
-
-  <div id="timer" class="position-fixed" style="top: 10px; right: 10px; background-color: white; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">Time Remaining: <span id="time">--:--</span></div>
+    <div id="timer">Time Remaining: <span id="time">--:--</span></div>
 </body>
+
 </html>
