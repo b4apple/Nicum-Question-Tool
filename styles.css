@@ -73,19 +73,6 @@ sexy button animation
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
 this is the animation of the header
 **/
@@ -148,3 +135,52 @@ this is the animation of the header
     animation: lights 5s 750ms linear infinite;
     font-family: 'Rubik Glitch'
   }
+
+  #work-area {
+    display: flexbox;
+    flex-direction: row;
+    justify-content: center;
+    border-width: 10px;
+    border-color: black;
+  }
+
+
+
+/* Responsive layout */
+#work-area {
+  max-width: 600px; /* Adjust the maximum width as needed */
+  margin: 0 auto; /* Center the content */
+  padding: 20px;
+}
+
+/* Styles for input fields */
+input[type="number"],
+input[type="text"],
+button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Styles for the timer */
+#timer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 768px) {
+  #work-area {
+      max-width: 90%; /* Adjust as needed */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  input[type="number"],
+  input[type="text"],
+  button {
+      font-size: 14px; /* Adjust font size for smaller screens */
+  }
+}
